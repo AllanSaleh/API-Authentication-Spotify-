@@ -55,25 +55,44 @@ def get_token():
 def search_song(title):
   '''Search a song by title'''
 
+  # 1. Spotify search endpoint URL
   url = "https://api.spotify.com/v1/search"
 
+  # 2. Parameters for the search request
+  # 'q' = query string (the song title we want to search)
+  # 'type' = specify we want to search for tracks (songs)
+  # 'limit' = number of results we want back (1 means just the first result)
   params = {
     'q': title,
     'type': 'track',
     'limit': 1
   }
 
+  # 3. Headers for the request
+  # Authorization header is required to prove we have permission to access Spotify API
+  # get_token() is a function that returns our Spotify access token
   headers = {
     "Authorization": f"Bearer {get_token()}"
   }
 
+  # 4. Send a GET request to the Spotify API
+  # We include the URL, headers (for auth), and parameters (search query)
   response = requests.get(url, params=params, headers=headers)
+  
+  # 5. Check if the request was successful (status code 200 means OK)
   if response.status_code == 200:
+    # Convert the response from JSON format into a Python dictionary
     data = response.json()
     print(json.dumps(data, indent=2))
+
+    # 6. Print some key details from the first track result
+    # Artist name
     print(data["tracks"]["items"][0]["artists"][0]['name'])
+    # Album name
     print(data["tracks"]["items"][0]["album"]["name"])
+    # Album cover image URL
     print(data["tracks"]["items"][0]["album"]["images"][0]['url'])
+    # Song name
     print(data["tracks"]["items"][0]["name"])
 
 search_song("Ride the lightning")
